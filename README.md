@@ -1,0 +1,1 @@
+A full-stack enterprise-grade E-Commerce platform built using the MEAN stack (MongoDB, Express, Angular, Node.js). It features JWT role-based authentication, real-time inventory management, complete checkout workflows, and corporate-level audit trails with soft-deletion capabilities.
