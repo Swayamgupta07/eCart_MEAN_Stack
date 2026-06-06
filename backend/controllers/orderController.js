@@ -60,3 +60,31 @@ exports.checkout = async (req, res, next) => {
         next(error);
     }
 };
+
+exports.updateOrderStatus = async (req, res, next) => {
+    try {
+        const { status } = req.body;
+        const validStatuses = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
+
+        if (!validStatuses.includes(status)) {
+            return res.status(400).json({ success: false, message: 'Invalid status' });
+        }
+
+        const order = await Order.findById(req.params.id);
+        if (!order) {
+            return res.status(404).json({ success: false, message: 'Order not found' });
+        }
+
+        order.status = status;
+        order.ModifiedBy = req.user._id;
+        await order.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Order status updated successfully',
+            order
+        });
+    } catch (error) {
+        next(error);
+    }
+};

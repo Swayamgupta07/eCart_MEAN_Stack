@@ -12,7 +12,7 @@ const getOrCreateCart = async (userId) => {
 exports.getCart = async (req, res, next) => {
     try {
         const cart = await getOrCreateCart(req.user._id);
-        await cart.populate('items.product saveForLater.product');
+        await cart.populate('items.product saveForLater.product'); // Replace the product IDs with the full product details (name, price, etc.) for the frontend
         
         res.status(200).json({
             success: true,
