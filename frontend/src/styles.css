@@ -1,17 +1,15 @@
-/* frontend/src/styles.css */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  /* User Custom Slate Blue Palette (Light Theme) */
-  --bg-color: #e5ecf4;       /* Alice Blue */
-  --surface-color: #ffffff;  /* White */
-  --primary-color: #8a4fff;  /* Medium Slate Blue */
-  --primary-hover: #733be6;  /* Darker Slate Blue */
-  --text-main: #1a1a1a;      /* Dark Text */
-  --text-muted: #6e6e6e;     /* Grey Text */
-  --border-color: #c3bef7;   /* Periwinkle */
-  --danger-color: #ef4444;   
-  --success-color: #effffa;  /* Mint Cream */
+  --bg-color: #e5ecf4;
+  --surface-color: #ffffff;
+  --primary-color: #8a4fff;
+  --primary-hover: #733be6;
+  --text-main: #1a1a1a;
+  --text-muted: #6e6e6e;
+  --border-color: #c3bef7;
+  --danger-color: #ef4444;
+  --success-color: #effffa;
 }
 
 * {
@@ -36,12 +34,12 @@ button {
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease; /* Hover effect smooth karne ke liye */
+  transition: all 0.3s ease;
 }
 
 button:hover {
   background-color: var(--primary-hover);
-  transform: translateY(-2px); /* Button halka sa upar uthega */
+  transform: translateY(-2px); 
 }
 
 .card {
