@@ -1,0 +1,43 @@
+<div class="form-container">
+  <div class="card form-card">
+    <h2 class="page-title">{{ isEditMode ? 'Edit Product' : 'Add New Product' }}</h2>
+
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label>Product Name</label>
+        <input type="text" name="name" [(ngModel)]="productData.name" required>
+      </div>
+
+      <div class="form-group">
+        <label>Category</label>
+        <input type="text" name="category" [(ngModel)]="productData.category" required>
+      </div>
+
+      <div class="form-group">
+        <label>Description</label>
+        <textarea name="description" [(ngModel)]="productData.description" rows="4"></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group flex-1">
+          <label>Price ($)</label>
+          <input type="number" name="price" [(ngModel)]="productData.price" required min="0">
+        </div>
+        <div class="form-group flex-1">
+          <label>Stock</label>
+          <input type="number" name="stock" [(ngModel)]="productData.stock" required min="0">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Image URL</label>
+        <input type="url" name="imageUrl" [(ngModel)]="productData.imageUrl">
+      </div>
+
+      <div class="action-buttons">
+        <a href="/admin-dashboard" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary">{{ isEditMode ? 'Save Changes' : 'Add Product' }}</button>
+      </div>
+    </form>
+  </div>
+</div>

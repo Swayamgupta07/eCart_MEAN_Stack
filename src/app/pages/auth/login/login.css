@@ -1,0 +1,53 @@
+.login-card {
+  max-width: 400px;
+  margin: 50px auto;
+  text-align: center;
+}
+
+h2 {
+  margin-bottom: 20px;
+  color: var(--primary-color);
+}
+
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--text-muted);
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-color);
+  color: var(--text-main);
+}
+
+button {
+  width: 100%;
+  margin-top: 15px;
+}
+
+.error-box {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: var(--danger-color);
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  border: 1px solid var(--danger-color);
+}
+
+.signup-link {
+  margin-top: 20px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+.signup-link a {
+  color: var(--primary-color);
+}
