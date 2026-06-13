@@ -7,10 +7,11 @@ const {
     moveToCart, 
     removeFromCart 
 } = require('../controllers/cartController');
-const { protect } = require('../middlewares/auth');
+const { protect, authorize } = require('../middlewares/auth');
 const { validateRequest } = require('../middlewares/validate');
 
 router.use(protect);
+router.use(authorize('customer'));
 
 router.get('/', getCart);
 router.post('/add', validateRequest('addToCart'), addToCart);

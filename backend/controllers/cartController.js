@@ -70,15 +70,17 @@ exports.addToCart = async (req, res, next) => {
 exports.saveForLater = async (req, res, next) => {
     try {
         const { productId } = req.params;
+        const productExists = await Product.findById(productId);
+        if (!productExists) {
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
+
         const cart = await getOrCreateCart(req.user._id);
 
         const itemIndex = cart.items.findIndex(item => item.product.toString() === productId);
-
-        if (itemIndex === -1) {
-            return res.status(400).json({ success: false, message: 'Item not found in your cart' });
+        if (itemIndex > -1) {
+            cart.items.splice(itemIndex, 1);
         }
-
-        cart.items.splice(itemIndex, 1);
 
         const savedIndex = cart.saveForLater.findIndex(item => item.product.toString() === productId);
         if (savedIndex === -1) {

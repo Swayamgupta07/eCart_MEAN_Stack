@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.use(protect);
 
-router.post('/checkout', checkout);
+router.post('/checkout', authorize('customer'), checkout);
 router.put('/:id/status', authorize('admin'), updateOrderStatus);
 
 module.exports = router;

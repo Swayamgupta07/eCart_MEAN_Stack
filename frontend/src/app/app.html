@@ -1,35 +1,212 @@
-<nav class="navbar">
-  <div class="nav-brand">
-    <span class="logo">eCart</span>
+<header class="app-header">
+  <nav class="navbar">
+    <div class="nav-brand" routerLink="/home" (click)="closeMenus()">
+      <img src="/favicon.png" alt="eCart Logo" class="brand-icon-img" />
+      <span class="logo-text">eCart<span class="dot">.</span></span>
+    </div>
+
+    <div class="nav-links-desktop">
+      <a
+        routerLink="/home"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="nav-link"
+        >Home</a
+      >
+      <a routerLink="/about" routerLinkActive="active" class="nav-link">About Us</a>
+      <a routerLink="/contact" routerLinkActive="active" class="nav-link">Contact Us</a>
+    </div>
+
+    <div class="nav-actions">
+      <ng-container *ngIf="authService.currentUser$ | async as user; else guestActions">
+        <a
+          *ngIf="user.role === 'customer'"
+          routerLink="/customer-dashboard"
+          class="cart-pill-btn"
+          (click)="closeMenus()"
+        >
+          <svg
+            class="cart-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+          <span class="cart-count">{{ (cartService.cartCount$ | async) || 0 }}</span>
+        </a>
+
+        <a
+          *ngIf="user.role === 'customer'"
+          routerLink="/customer-dashboard"
+          fragment="save-for-later"
+          class="heart-pill-btn"
+          (click)="closeMenus()"
+          title="Saved for Later"
+        >
+          <svg
+            class="heart-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+            ></path>
+          </svg>
+          <span class="heart-count">{{ (cartService.saveLaterCount$ | async) || 0 }}</span>
+        </a>
+
+        <a
+          *ngIf="user.role === 'admin'"
+          routerLink="/admin-dashboard"
+          class="admin-badge-link"
+          (click)="closeMenus()"
+        >
+          Admin Portal
+        </a>
+
+        <div class="user-profile-menu">
+          <button class="profile-trigger" (click)="toggleProfileDropdown()">
+            <div class="avatar-circle">
+              {{ user.name ? user.name.charAt(0).toUpperCase() : 'U' }}
+            </div>
+            <span class="user-firstname">{{ user.name ? user.name.split(' ')[0] : 'User' }}</span>
+            <svg
+              class="chevron-icon"
+              [class.rotated]="isProfileDropdownOpen"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+
+          <div class="profile-dropdown" [class.show]="isProfileDropdownOpen">
+            <div class="dropdown-header">
+              <span class="user-full-name">{{ user.name }}</span>
+              <span class="user-role-tag">{{ user.role }}</span>
+            </div>
+            <hr class="dropdown-divider" />
+            <a
+              *ngIf="user.role === 'customer'"
+              routerLink="/customer-dashboard"
+              class="dropdown-item"
+              (click)="closeMenus()"
+            >
+              My Shopping Cart
+            </a>
+            <a
+              *ngIf="user.role === 'admin'"
+              routerLink="/admin-dashboard"
+              class="dropdown-item"
+              (click)="closeMenus()"
+            >
+              Manage Products
+            </a>
+            <button (click)="logout()" class="dropdown-item logout-action">
+              <svg
+                class="logout-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+              Logout
+            </button>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-template #guestActions>
+        <a routerLink="/login" class="login-pill-btn" (click)="closeMenus()"> Sign In </a>
+      </ng-template>
+
+      <button class="hamburger-btn" (click)="toggleMobileMenu()">
+        <svg
+          class="hamburger-icon"
+          [class.open]="isMobileMenuOpen"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <line x1="3" y1="12" x2="21" y2="12" class="line-mid"></line>
+          <line x1="3" y1="6" x2="21" y2="6" class="line-top"></line>
+          <line x1="3" y1="18" x2="21" y2="18" class="line-bot"></line>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <div class="mobile-drawer" [class.open]="isMobileMenuOpen">
+    <div class="mobile-drawer-links">
+      <a
+        routerLink="/home"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="mobile-link"
+        (click)="closeMenus()"
+        >Home</a
+      >
+      <a routerLink="/about" routerLinkActive="active" class="mobile-link" (click)="closeMenus()"
+        >About Us</a
+      >
+      <a routerLink="/contact" routerLinkActive="active" class="mobile-link" (click)="closeMenus()"
+        >Contact Us</a
+      >
+      <ng-container *ngIf="authService.currentUser$ | async as user">
+        <a
+          *ngIf="user.role === 'customer'"
+          routerLink="/customer-dashboard"
+          class="mobile-link"
+          (click)="closeMenus()"
+        >
+          My Cart ({{ (cartService.cartCount$ | async) || 0 }} Items)
+        </a>
+        <a
+          *ngIf="user.role === 'customer'"
+          routerLink="/customer-dashboard"
+          fragment="save-for-later"
+          class="mobile-link"
+          (click)="closeMenus()"
+        >
+          Saved Items ({{ (cartService.saveLaterCount$ | async) || 0 }} Items)
+        </a>
+        <a
+          *ngIf="user.role === 'admin'"
+          routerLink="/admin-dashboard"
+          class="mobile-link"
+          (click)="closeMenus()"
+        >
+          Admin Dashboard
+        </a>
+        <button (click)="logout()" class="mobile-link mobile-logout-btn">Logout</button>
+      </ng-container>
+    </div>
   </div>
+</header>
 
-
-  <ng-container *ngIf="authService.currentUser$ | async as user; else guestLinks">
-<!-- The AuthService observable continuously broadcasts whether a user is logged in or not. The | async pipe automatically subscribes to this data to instantly update the UI, while as user stores that data into a local variable so we can easily check the user's role in the HTML. -->
-    <div class="nav-links">
-      <a routerLink="/home" class="nav-link">Home</a>
-      <a routerLink="/about" class="nav-link">About Us</a>
-      <a routerLink="/contact" class="nav-link">Contact Us</a>
-
-      <a *ngIf="user.role === 'customer'" routerLink="/customer-dashboard" class="nav-link">My Cart ({{ cartService.cartCount$ | async }})</a>
-
-      <a *ngIf="user.role === 'admin'" routerLink="/admin-dashboard" class="nav-link">Dashboard (Products)</a>
-
-      <button (click)="logout()" class="nav-link login-btn" style="background-color: var(--danger-color);">Logout</button>
-    </div>
-  </ng-container>
-
-  <ng-template #guestLinks>
-    <div class="nav-links">
-      <a routerLink="/home" class="nav-link">Home</a>
-      <a routerLink="/about" class="nav-link">About Us</a>
-      <a routerLink="/contact" class="nav-link">Contact Us</a>
-
-      <a routerLink="/login" class="nav-link login-btn">Login / Signup</a>
-    </div>
-  </ng-template>
-</nav>
-
-<main class="container">
+<main class="main-container">
   <router-outlet></router-outlet>
 </main>

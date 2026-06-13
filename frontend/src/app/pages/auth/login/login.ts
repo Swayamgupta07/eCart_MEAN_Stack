@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Auth } from '../../../services/auth';
 import { FormsModule } from '@angular/forms';
-import {CommonModule} from '@angular/common';
+import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
+
 @Component({
   selector: 'app-login',
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
@@ -38,5 +39,4 @@ export class Login {
       }
     });
   }
-
 }
