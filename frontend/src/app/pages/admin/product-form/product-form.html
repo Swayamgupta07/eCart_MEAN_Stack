@@ -1,13 +1,15 @@
 <div class="form-container">
   <div class="card form-card">
     <div class="form-header">
-      <h2 class="page-title">{{ isEditMode ? 'Modify Product' : 'Add New Product' }}</h2>
+      <h2 class="page-title">{{ isEditMode() ? 'Modify Product' : 'Add New Product' }}</h2>
       <p class="subtitle">Fill in the organic product details for the grocery catalog</p>
     </div>
 
-    <div class="image-preview-container" *ngIf="productData.imageUrl">
-      <img [src]="productData.imageUrl" alt="Product Preview" class="image-preview">
-    </div>
+    @if (productData.imageUrl) {
+      <div class="image-preview-container">
+        <img [src]="productData.imageUrl" alt="Product Preview" class="image-preview">
+      </div>
+    }
 
     <form (ngSubmit)="onSubmit()">
       <div class="form-group">
@@ -44,15 +46,15 @@
       <div class="action-buttons">
         <a routerLink="/admin-dashboard" class="btn btn-cancel">Cancel</a>
         <button type="submit" class="btn btn-save">
-          {{ isEditMode ? 'Update Product' : 'Create Product' }}
+          {{ isEditMode() ? 'Update Product' : 'Create Product' }}
         </button>
       </div>
     </form>
 
     <div style="background: rgba(0,0,0,0.05); padding: 15px; border-radius: 8px; margin-top: 20px; font-family: monospace; font-size: 0.85rem; border: 1px solid rgba(0,0,0,0.1);">
       <div style="font-weight: bold; margin-bottom: 8px; color: var(--text-main);">Debug Panel (Form State)</div>
-      <div><strong>Product ID:</strong> {{ productId || 'NULL' }}</div>
-      <div><strong>Edit Mode:</strong> {{ isEditMode }}</div>
+      <div><strong>Product ID:</strong> {{ productId() || 'NULL' }}</div>
+      <div><strong>Edit Mode:</strong> {{ isEditMode() }}</div>
       <div style="margin-top: 8px;"><strong>Form Object:</strong></div>
       <pre style="background: white; padding: 10px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.05); overflow-x: auto; max-height: 200px; margin: 4px 0 0 0;">{{ productData | json }}</pre>
     </div>

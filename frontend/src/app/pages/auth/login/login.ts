@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Auth } from '../../../services/auth';
 import { FormsModule } from '@angular/forms';
@@ -7,17 +7,18 @@ import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-login',
+  standalone: true,
   imports: [FormsModule, CommonModule, RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
 export class Login {
-  credentials = {email: '', password: ''};
-  errorMessage = '';
+  credentials = { email: '', password: '' };
+  errorMessage = signal('');
 
   constructor(private authService: Auth, private router: Router) {}
 
-  onSubmit(){
+  onSubmit() {
     this.authService.login(this.credentials).subscribe({
       next: (response) => {
         if (response.success) {
@@ -30,12 +31,12 @@ export class Login {
           });
           this.router.navigate(['/home']);
         } else {
-          this.errorMessage = 'Sorry, login failed. Please check your credentials.';
+          this.errorMessage.set(response.message || 'Sorry, login failed. Please check your credentials.');
         }
       },
       error: (err) => {
         console.error('Login error:', err);
-        this.errorMessage = 'An error occurred during login. Please try again later.';
+        this.errorMessage.set(err.error?.message || 'An error occurred during login. Please try again later.');
       }
     });
   }

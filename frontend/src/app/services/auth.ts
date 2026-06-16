@@ -1,6 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 @Injectable({
@@ -8,13 +7,12 @@ import { tap } from 'rxjs/operators';
 })
 export class Auth {
   private apiUrl = 'http://localhost:3000/auth';
-  private currentUserSubject = new BehaviorSubject<any>(null);
-  public currentUser$ = this.currentUserSubject.asObservable();
+  public currentUser = signal<any>(null);
 
   constructor(private http: HttpClient) {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      this.currentUserSubject.next(JSON.parse(storedUser));
+      this.currentUser.set(JSON.parse(storedUser));
     }
   }
 
@@ -24,7 +22,7 @@ export class Auth {
         if (response.success) {
           localStorage.setItem('token', response.token);
           localStorage.setItem('user', JSON.stringify(response.user));
-          this.currentUserSubject.next(response.user);
+          this.currentUser.set(response.user);
         }
       })
     );
@@ -39,13 +37,13 @@ export class Auth {
   }
 
   getRole(): string | null {
-    const user = this.currentUserSubject.value;
+    const user = this.currentUser();
     return user ? user.role : null;
   }
 
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    this.currentUserSubject.next(null);
+    this.currentUser.set(null);
   }
 }

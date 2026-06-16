@@ -5,14 +5,16 @@
       <p>Join eCart to order fresh, organic grocery items today!</p>
     </div>
 
-    <div *ngIf="errorMessage" class="error-box">
-      <svg class="error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="10"></circle>
-        <line x1="12" y1="8" x2="12" y2="12"></line>
-        <line x1="12" y1="16" x2="12.01" y2="16"></line>
-      </svg>
-      <span>{{ errorMessage }}</span>
-    </div>
+    @if (errorMessage()) {
+      <div class="error-box">
+        <svg class="error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <span>{{ errorMessage() }}</span>
+      </div>
+    }
 
     <form (ngSubmit)="onSubmit()">
       <div class="form-group">

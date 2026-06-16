@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, untracked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, ActivatedRoute } from '@angular/router';
@@ -14,13 +14,13 @@ import Swal from 'sweetalert2';
   styleUrl: './customer-dashboard.css',
 })
 export class CustomerDashboard implements OnInit {
-  cartItems: any[] = [];
-  saveLaterItems: any[] = [];
-  totalPrice: number = 0;
-  isLoading = true;
+  cartItems = signal<any[]>([]);
+  saveLaterItems = signal<any[]>([]);
+  totalPrice = signal<number>(0);
+  isLoading = signal<boolean>(true);
   couponCode = '';
-  couponDiscount = 0;
-  couponApplied = false;
+  couponDiscount = signal<number>(0);
+  couponApplied = signal<boolean>(false);
 
   constructor(
     private cartService: Cart,
@@ -46,34 +46,39 @@ export class CustomerDashboard implements OnInit {
     this.cartService.getCart().subscribe({
       next: (res) => {
         if (res.success && res.cart) {
-          this.cartItems = res.cart.items || [];
-          this.saveLaterItems = res.cart.saveForLater || [];
+          const validItems = (res.cart.items || []).filter((item: any) => item && item.product);
+          const validSaveLater = (res.cart.saveForLater || []).filter((item: any) => item && item.product);
+          this.cartItems.set(validItems);
+          this.saveLaterItems.set(validSaveLater);
           this.calculateTotal();
         }
-        this.isLoading = false;
+        this.isLoading.set(false);
       },
       error: (err) => {
         console.error('Error fetching cart:', err);
-        this.isLoading = false;
+        this.isLoading.set(false);
       }
     });
   }
 
   calculateTotal() {
-    const subtotal = this.cartItems.reduce((acc, item) => {
-      return acc + (item.product.price * item.quantity);
+    const subtotal = this.cartItems().reduce((acc, item) => {
+      const price = item && item.product ? (item.product.price || 0) : 0;
+      const qty = item ? (item.quantity || 0) : 0;
+      return acc + (price * qty);
     }, 0);
-    this.totalPrice = Math.max(0, subtotal - this.couponDiscount);
+    this.totalPrice.set(Math.max(0, subtotal - this.couponDiscount()));
   }
 
   updateQuantity(item: any, change: number) {
-    const newQty = item.quantity + change;
+    if (!item || !item.product) return;
+    const newQty = (item.quantity || 0) + change;
     if (newQty <= 0) {
       this.removeItem(item.product._id);
       return;
     }
 
-    if (change > 0 && newQty > item.product.stock) {
+    if (change > 0 && newQty > (item.product.stock || 0)) {
       Swal.fire({
         icon: 'warning',
         title: 'Out of Stock',
@@ -82,7 +87,7 @@ export class CustomerDashboard implements OnInit {
       return;
     }
 
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.cartService.addToCart(item.product._id, change).subscribe({
       next: (res) => {
         if (res.success) {
@@ -91,7 +96,7 @@ export class CustomerDashboard implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        this.isLoading = false;
+        this.isLoading.set(false);
       }
     });
   }
@@ -105,7 +110,7 @@ export class CustomerDashboard implements OnInit {
       confirmButtonText: 'Yes, remove it'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.isLoading = true;
+        this.isLoading.set(true);
         this.cartService.removeFromCart(productId).subscribe({
           next: () => {
             Swal.fire({
@@ -121,7 +126,7 @@ export class CustomerDashboard implements OnInit {
           },
           error: (err) => {
             console.error(err);
-            this.isLoading = false;
+            this.isLoading.set(false);
           }
         });
       }
@@ -129,7 +134,7 @@ export class CustomerDashboard implements OnInit {
   }
 
   saveForLater(productId: string) {
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.cartService.saveForLater(productId).subscribe({
       next: () => {
         Swal.fire({
@@ -145,13 +150,13 @@ export class CustomerDashboard implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        this.isLoading = false;
+        this.isLoading.set(false);
       }
     });
   }
 
   moveToCart(productId: string) {
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.cartService.moveToCart(productId).subscribe({
       next: () => {
         Swal.fire({
@@ -167,16 +172,20 @@ export class CustomerDashboard implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        this.isLoading = false;
+        this.isLoading.set(false);
       }
     });
   }
 
   applyCoupon() {
     if (this.couponCode.toUpperCase() === 'ECART15') {
-      const subtotal = this.cartItems.reduce((acc, item) => acc + (item.product.price * item.quantity), 0);
-      this.couponDiscount = subtotal * 0.15;
-      this.couponApplied = true;
+      const subtotal = this.cartItems().reduce((acc, item) => {
+        const price = item && item.product ? (item.product.price || 0) : 0;
+        const qty = item ? (item.quantity || 0) : 0;
+        return acc + (price * qty);
+      }, 0);
+      this.couponDiscount.set(subtotal * 0.15);
+      this.couponApplied.set(true);
       this.calculateTotal();
       Swal.fire({
         icon: 'success',
@@ -204,12 +213,12 @@ export class CustomerDashboard implements OnInit {
           timer: 2000,
           showConfirmButton: false
         });
-        this.cartItems = [];
-        this.saveLaterItems = [];
-        this.totalPrice = 0;
+        this.cartItems.set([]);
+        this.saveLaterItems.set([]);
+        this.totalPrice.set(0);
         this.couponCode = '';
-        this.couponDiscount = 0;
-        this.couponApplied = false;
+        this.couponDiscount.set(0);
+        this.couponApplied.set(false);
         this.cartService.getCart().subscribe();
       },
       error: (err) => {

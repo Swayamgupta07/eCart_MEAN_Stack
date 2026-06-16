@@ -20,65 +20,72 @@
   </div>
 
   <div class="product-grid">
-    <ng-container *ngIf="isLoading; else productList">
-      <div class="card skeleton-card" *ngFor="let dummy of [1, 2, 3, 4, 5, 6]">
-        <div class="skeleton skeleton-img"></div>
-        <div class="skeleton skeleton-badge"></div>
-        <div class="skeleton skeleton-title"></div>
-        <div class="skeleton skeleton-desc"></div>
-        <div class="skeleton-footer">
-          <div class="skeleton skeleton-price"></div>
-          <div class="skeleton skeleton-btn"></div>
-        </div>
-      </div>
-    </ng-container>
-
-    <ng-template #productList>
-      <div class="card product-card" *ngFor="let product of products">
-        <div class="image-wrapper">
-          <img [src]="product.imageUrl || 'https://images.unsplash.com/photo-1610348725531-843dff10902c?auto=format&fit=crop&q=80&w=400'" [alt]="product.name" class="product-image">
-          <span class="discount-pill">-15% OFF</span>
-          <button *ngIf="(authService.currentUser$ | async)?.role !== 'admin'" 
-                  class="save-for-later-btn" 
-                  [class.active]="savedProductIds.has(product._id)" 
-                  (click)="toggleSaveForLater(product)"
-                  title="Save for Later">
-            <svg class="heart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-            </svg>
-          </button>
-        </div>
-        
-        <div class="product-details">
-          <div class="meta-row">
-            <span class="category-badge">{{ product.category }}</span>
-            <div class="rating-badge">
-              <svg class="star-icon" viewBox="0 0 24 24" fill="currentColor">
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-              </svg>
-              <span>4.8</span>
-            </div>
+    @if (isLoading()) {
+      @for (dummy of [1, 2, 3, 4, 5, 6]; track dummy) {
+        <div class="card skeleton-card">
+          <div class="skeleton skeleton-img"></div>
+          <div class="skeleton skeleton-badge"></div>
+          <div class="skeleton skeleton-title"></div>
+          <div class="skeleton skeleton-desc"></div>
+          <div class="skeleton-footer">
+            <div class="skeleton skeleton-price"></div>
+            <div class="skeleton skeleton-btn"></div>
           </div>
-
-          <h3 class="product-name">{{ product.name }}</h3>
-          <p class="product-desc">{{ product.description }}</p>
-          
-          <div class="price-action">
-            <div class="price-box">
-              <span class="original-price">₹{{ product.price.toFixed(2) }}</span>
-              <span class="discounted-price">₹{{ product.price | discount:15 }}</span>
-            </div>
+        </div>
+      }
+    } @else {
+      @for (product of products(); track product._id) {
+        <div class="card product-card">
+          <div class="image-wrapper">
+            <img [src]="product.imageUrl || 'https://images.unsplash.com/photo-1610348725531-843dff10902c?auto=format&fit=crop&q=80&w=400'" [alt]="product.name" class="product-image">
+            <span class="discount-pill">-15% OFF</span>
             
-            <button *ngIf="(authService.currentUser$ | async)?.role !== 'admin'" class="add-to-cart-btn" (click)="addToCart(product)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
-              Add
-            </button>
+            @if (authService.currentUser()?.role !== 'admin') {
+              <button 
+                class="save-for-later-btn" 
+                [class.active]="savedProductIds().has(product._id)" 
+                (click)="toggleSaveForLater(product)"
+                title="Save for Later">
+                <svg class="heart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+              </button>
+            }
+          </div>
+          
+          <div class="product-details">
+            <div class="meta-row">
+              <span class="category-badge">{{ product.category }}</span>
+              <div class="rating-badge">
+                <svg class="star-icon" viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+                <span>4.8</span>
+              </div>
+            </div>
+
+            <h3 class="product-name">{{ product.name }}</h3>
+            <p class="product-desc">{{ product.description }}</p>
+            
+            <div class="price-action">
+              <div class="price-box">
+                <span class="original-price">₹{{ (product.price || 0).toFixed(2) }}</span>
+                <span class="discounted-price">₹{{ (product.price || 0) | discount:15 }}</span>
+              </div>
+              
+              @if (authService.currentUser()?.role !== 'admin') {
+                <button class="add-to-cart-btn" (click)="addToCart(product)">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  Add
+                </button>
+              }
+            </div>
           </div>
         </div>
-      </div>
-    </ng-template>
+      }
+    }
   </div>
 </div>
