@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, effect, untracked } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { Auth } from './services/auth';
 import { Cart } from './services/cart';
@@ -13,32 +13,35 @@ import { CommonModule } from '@angular/common';
 })
 export class App {
   protected readonly title = signal('frontend');
-  isMobileMenuOpen = false;
-  isProfileDropdownOpen = false;
+  isMobileMenuOpen = signal(false);
+  isProfileDropdownOpen = signal(false);
 
   constructor(public authService: Auth, public cartService: Cart) {
-    this.authService.currentUser$.subscribe(user => {
-      if (user && user.role === 'customer') {
-        this.cartService.getCart().subscribe({
-          error: (err) => console.error(err)
-        });
-      } else {
-        this.cartService.resetCounts();
-      }
+    effect(() => {
+      const user = this.authService.currentUser();
+      untracked(() => {
+        if (user && user.role === 'customer') {
+          this.cartService.getCart().subscribe({
+            error: (err) => console.error(err)
+          });
+        } else {
+          this.cartService.resetCounts();
+        }
+      });
     });
   }
 
   toggleMobileMenu() {
-    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+    this.isMobileMenuOpen.update(v => !v);
   }
 
   toggleProfileDropdown() {
-    this.isProfileDropdownOpen = !this.isProfileDropdownOpen;
+    this.isProfileDropdownOpen.update(v => !v);
   }
 
   closeMenus() {
-    this.isMobileMenuOpen = false;
-    this.isProfileDropdownOpen = false;
+    this.isMobileMenuOpen.set(false);
+    this.isProfileDropdownOpen.set(false);
   }
 
   logout() {

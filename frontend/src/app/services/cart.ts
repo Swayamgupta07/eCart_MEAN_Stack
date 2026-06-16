@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 @Injectable({
@@ -9,17 +9,10 @@ import { tap } from 'rxjs/operators';
 export class Cart {
   private apiUrl = 'http://localhost:3000/cart';
   
-  private cartCountSubject = new BehaviorSubject<number>(0);
-  public cartCount$ = this.cartCountSubject.asObservable();
-
-  private saveLaterCountSubject = new BehaviorSubject<number>(0);
-  public saveLaterCount$ = this.saveLaterCountSubject.asObservable();
-
-  private cartItemsSubject = new BehaviorSubject<any[]>([]);
-  public cartItems$ = this.cartItemsSubject.asObservable();
-
-  private saveLaterItemsSubject = new BehaviorSubject<any[]>([]);
-  public saveLaterItems$ = this.saveLaterItemsSubject.asObservable();
+  public cartCount = signal<number>(0);
+  public saveLaterCount = signal<number>(0);
+  public cartItems = signal<any[]>([]);
+  public saveLaterItems = signal<any[]>([]);
 
   constructor(private http: HttpClient) {}
 
@@ -27,11 +20,11 @@ export class Cart {
     if (res.success && res.cart) {
       const items = res.cart.items || [];
       const saveLater = res.cart.saveForLater || [];
-      this.cartItemsSubject.next(items);
-      this.saveLaterItemsSubject.next(saveLater);
+      this.cartItems.set(items);
+      this.saveLaterItems.set(saveLater);
       const totalItems = items.reduce((acc: number, item: any) => acc + item.quantity, 0);
-      this.cartCountSubject.next(totalItems);
-      this.saveLaterCountSubject.next(saveLater.length);
+      this.cartCount.set(totalItems);
+      this.saveLaterCount.set(saveLater.length);
     }
   }
 
@@ -66,10 +59,9 @@ export class Cart {
   }
 
   resetCounts() {
-    this.cartItemsSubject.next([]);
-    this.saveLaterItemsSubject.next([]);
-    this.cartCountSubject.next(0);
-    this.saveLaterCountSubject.next(0);
+    this.cartItems.set([]);
+    this.saveLaterItems.set([]);
+    this.cartCount.set(0);
+    this.saveLaterCount.set(0);
   }
 }
-

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, effect, untracked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Product } from '../../services/product';
@@ -15,32 +15,45 @@ import Swal from 'sweetalert2';
   styleUrl: './home.css'
 })
 export class Home implements OnInit {
-  products: any[] = [];
-  isLoading = true;
-  savedProductIds: Set<string> = new Set();
+  products = signal<any[]>([]);
+  isLoading = signal<boolean>(true);
+  savedProductIds = signal<Set<string>>(new Set());
 
   constructor(
     private productService: Product,
     private cartService: Cart,
     public authService: Auth
-  ) {}
+  ) {
+    effect(() => {
+      const items = this.cartService.saveLaterItems();
+      untracked(() => {
+        if (items && Array.isArray(items)) {
+          this.savedProductIds.set(
+            new Set(
+              items
+                .filter(item => item && item.product && item.product._id)
+                .map(item => item.product._id)
+            )
+          );
+        } else {
+          this.savedProductIds.set(new Set());
+        }
+      });
+    });
+  }
 
   ngOnInit() {
     this.productService.getProducts().subscribe({
       next: (res) => {
-        if (res.success) {
-          this.products = res.products;
+        if (res && res.success && Array.isArray(res.products)) {
+          this.products.set(res.products);
         }
-        this.isLoading = false;
+        this.isLoading.set(false);
       },
       error: (err) => {
         console.error(err);
-        this.isLoading = false;
+        this.isLoading.set(false);
       }
-    });
-
-    this.cartService.saveLaterItems$.subscribe(items => {
-      this.savedProductIds = new Set(items.map(item => item.product._id));
     });
   }
 
@@ -106,7 +119,7 @@ export class Home implements OnInit {
       return;
     }
 
-    if (this.savedProductIds.has(product._id)) {
+    if (this.savedProductIds().has(product._id)) {
       this.cartService.removeFromCart(product._id).subscribe({
         next: () => {
           Swal.fire({

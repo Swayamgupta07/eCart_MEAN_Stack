@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -13,8 +13,8 @@ import Swal from 'sweetalert2';
   styleUrl: './admin-dashboard.css'
 })
 export class AdminDashboard implements OnInit {
-  products: any[] = [];
-  isLoading = true;
+  products = signal<any[]>([]);
+  isLoading = signal<boolean>(true);
 
   constructor(private productAPI: Product) {}
 
@@ -26,13 +26,13 @@ export class AdminDashboard implements OnInit {
     this.productAPI.getProducts().subscribe({
       next: (res) => {
         if (res.success) {
-          this.products = res.products || [];
+          this.products.set(res.products || []);
         }
-        this.isLoading = false;
+        this.isLoading.set(false);
       },
       error: (err) => {
         console.error(err);
-        this.isLoading = false;
+        this.isLoading.set(false);
       }
     });
   }
@@ -47,7 +47,7 @@ export class AdminDashboard implements OnInit {
       cancelButtonText: 'Cancel'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.isLoading = true;
+        this.isLoading.set(true);
         this.productAPI.deleteProduct(id).subscribe({
           next: () => {
             Swal.fire('Deleted!', 'Product has been deleted.', 'success');
@@ -55,7 +55,7 @@ export class AdminDashboard implements OnInit {
           },
           error: (err) => {
             console.error(err);
-            this.isLoading = false;
+            this.isLoading.set(false);
             Swal.fire('Error', 'Failed to delete product', 'error');
           }
         });

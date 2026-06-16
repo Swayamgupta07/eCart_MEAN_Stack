@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -22,8 +22,8 @@ export class ProductForm implements OnInit {
     imageUrl: ''
   };
   
-  isEditMode = false;
-  productId: string | null = null;
+  isEditMode = signal(false);
+  productId = signal<string | null>(null);
 
   constructor(
     private productAPI: Product,
@@ -33,10 +33,11 @@ export class ProductForm implements OnInit {
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
-      this.productId = params.get('id');
-      if (this.productId) {
-        this.isEditMode = true;
-        this.productAPI.getProduct(this.productId).subscribe({
+      const id = params.get('id');
+      this.productId.set(id);
+      if (id) {
+        this.isEditMode.set(true);
+        this.productAPI.getProduct(id).subscribe({
           next: (res) => {
             if (res.success && res.product) {
               this.productData.name = res.product.name || '';
@@ -57,7 +58,7 @@ export class ProductForm implements OnInit {
           }
         });
       } else {
-        this.isEditMode = false;
+        this.isEditMode.set(false);
         this.productData.name = '';
         this.productData.description = '';
         this.productData.price = 0;
@@ -69,13 +70,17 @@ export class ProductForm implements OnInit {
   }
 
   onSubmit() {
-    if (this.isEditMode && this.productId) {
-      this.productAPI.updateProduct(this.productId, this.productData).subscribe({
+    const id = this.productId();
+    if (this.isEditMode() && id) {
+      this.productAPI.updateProduct(id, this.productData).subscribe({
         next: () => {
           Swal.fire('Updated!', 'Product updated successfully', 'success');
           this.router.navigate(['/admin-dashboard']);
         },
-        error: (err) => Swal.fire('Error', err.error.message || 'Failed to update', 'error')
+        error: (err) => {
+          const errMsg = err.error?.errors && Array.isArray(err.error.errors) ? err.error.errors.join(', ') : (err.error?.message || 'Failed to update');
+          Swal.fire('Error', errMsg, 'error');
+        }
       });
     } else {
       this.productAPI.addProduct(this.productData).subscribe({
@@ -83,7 +88,10 @@ export class ProductForm implements OnInit {
           Swal.fire('Added!', 'Product added successfully', 'success');
           this.router.navigate(['/admin-dashboard']);
         },
-        error: (err) => Swal.fire('Error', err.error.message || 'Failed to add', 'error')
+        error: (err) => {
+          const errMsg = err.error?.errors && Array.isArray(err.error.errors) ? err.error.errors.join(', ') : (err.error?.message || 'Failed to add');
+          Swal.fire('Error', errMsg, 'error');
+        }
       });
     }
   }

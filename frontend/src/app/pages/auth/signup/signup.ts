@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Auth } from '../../../services/auth';
 import { FormsModule } from '@angular/forms';
@@ -19,7 +19,7 @@ export class Signup {
     password: '',
     role: 'customer'
   };
-  errorMessage = '';
+  errorMessage = signal('');
 
   constructor(private authService: Auth, private router: Router) {}
 
@@ -36,12 +36,16 @@ export class Signup {
           });
           this.router.navigate(['/login']);
         } else {
-          this.errorMessage = response.message || 'Registration failed.';
+          this.errorMessage.set(response.message || 'Registration failed.');
         }
       },
       error: (err) => {
         console.error(err);
-        this.errorMessage = err.error?.message || 'Registration failed. Try again later.';
+        if (err.error?.errors && Array.isArray(err.error.errors)) {
+          this.errorMessage.set(err.error.errors.join(', '));
+        } else {
+          this.errorMessage.set(err.error?.message || 'Registration failed. Try again later.');
+        }
       }
     });
   }

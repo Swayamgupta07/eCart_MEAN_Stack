@@ -26,66 +26,73 @@
           </tr>
         </thead>
         <tbody>
-          <ng-container *ngIf="isLoading; else dataRows">
-            <tr *ngFor="let item of [1, 2, 3, 4]">
-              <td>
-                <div class="skeleton-table-cell-product">
-                  <div class="skeleton skeleton-table-img"></div>
-                  <div class="skeleton-table-subcell">
-                    <div class="skeleton skeleton-table-title"></div>
+          @if (isLoading()) {
+            @for (item of [1, 2, 3, 4]; track item) {
+              <tr>
+                <td>
+                  <div class="skeleton-table-cell-product">
+                    <div class="skeleton skeleton-table-img"></div>
+                    <div class="skeleton-table-subcell">
+                      <div class="skeleton skeleton-table-title"></div>
+                    </div>
                   </div>
-                </div>
-              </td>
-              <td><div class="skeleton skeleton-table-badge"></div></td>
-              <td><div class="skeleton skeleton-table-price"></div></td>
-              <td><div class="skeleton skeleton-table-stock"></div></td>
-              <td class="text-right"><div class="skeleton skeleton-table-actions float-right"></div></td>
-            </tr>
-          </ng-container>
-
-          <ng-template #dataRows>
-            <tr *ngFor="let product of products">
-              <td>
-                <div class="product-info-cell">
-                  <img [src]="product.imageUrl || 'https://images.unsplash.com/photo-1610348725531-843dff10902c?auto=format&fit=crop&q=80&w=60'" [alt]="product.name" class="table-product-img">
-                  <div class="info-cell-text">
-                    <span class="product-name-txt">{{ product.name }}</span>
+                </td>
+                <td><div class="skeleton skeleton-table-badge"></div></td>
+                <td><div class="skeleton skeleton-table-price"></div></td>
+                <td><div class="skeleton skeleton-table-stock"></div></td>
+                <td class="text-right"><div class="skeleton skeleton-table-actions float-right"></div></td>
+              </tr>
+            }
+          } @else {
+            @for (product of products(); track product._id) {
+              <tr>
+                <td>
+                  <div class="product-info-cell">
+                    <img [src]="product.imageUrl || 'https://images.unsplash.com/photo-1610348725531-843dff10902c?auto=format&fit=crop&q=80&w=60'" [alt]="product.name" class="table-product-img">
+                    <div class="info-cell-text">
+                      <span class="product-name-txt">{{ product.name }}</span>
+                    </div>
                   </div>
-                </div>
-              </td>
-              <td>
-                <span class="category-chip">{{ product.category }}</span>
-              </td>
-              <td class="price-txt">₹{{ product.price.toFixed(2) }}</td>
-              <td>
-                <span class="stock-badge in-stock" *ngIf="product.stock > 10">
-                  In Stock ({{ product.stock }})
-                </span>
-                <span class="stock-badge low-stock" *ngIf="product.stock <= 10 && product.stock > 0">
-                  Low Stock ({{ product.stock }})
-                </span>
-                <span class="stock-badge out-stock" *ngIf="product.stock === 0">
-                  Out of Stock
-                </span>
-              </td>
-              <td class="actions-cell text-right">
-                <a [routerLink]="['/admin-dashboard/edit-product', product._id]" class="action-btn edit-btn">
-                  Edit
-                </a>
-                <button class="action-btn delete-btn" (click)="deleteProduct(product._id)">
-                  Delete
-                </button>
-              </td>
-            </tr>
-            <tr *ngIf="products.length === 0">
-              <td colspan="5" class="empty-table-cell">
-                <div class="empty-inventory">
-                  <h4>No items found</h4>
-                  <p>Start filling your virtual organic shelves by adding products.</p>
-                </div>
-              </td>
-            </tr>
-          </ng-template>
+                </td>
+                <td>
+                  <span class="category-chip">{{ product.category }}</span>
+                </td>
+                <td class="price-txt">₹{{ (product.price || 0).toFixed(2) }}</td>
+                <td>
+                  @if (product.stock > 10) {
+                    <span class="stock-badge in-stock">
+                      In Stock ({{ product.stock }})
+                    </span>
+                  } @else if (product.stock <= 10 && product.stock > 0) {
+                    <span class="stock-badge low-stock">
+                      Low Stock ({{ product.stock }})
+                    </span>
+                  } @else {
+                    <span class="stock-badge out-stock">
+                      Out of Stock
+                    </span>
+                  }
+                </td>
+                <td class="actions-cell text-right">
+                  <a [routerLink]="['/admin-dashboard/edit-product', product._id]" class="action-btn edit-btn">
+                    Edit
+                  </a>
+                  <button class="action-btn delete-btn" (click)="deleteProduct(product._id)">
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="empty-table-cell">
+                  <div class="empty-inventory">
+                    <h4>No items found</h4>
+                    <p>Start filling your virtual organic shelves by adding products.</p>
+                  </div>
+                </td>
+              </tr>
+            }
+          }
         </tbody>
       </table>
     </div>
