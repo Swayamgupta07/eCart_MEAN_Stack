@@ -15,10 +15,10 @@
   justify-content: space-between;
   align-items: center;
   padding: 14px 28px;
-  background: rgba(255, 255, 255, 0.75);
+  background: var(--surface-color);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--border-glass);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-soft);
 }
@@ -228,10 +228,10 @@
   position: absolute;
   top: calc(100% + 12px);
   right: 0;
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--surface-color);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(0, 181, 83, 0.08);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
   padding: 16px;
@@ -375,10 +375,10 @@
 .mobile-drawer {
   display: none;
   width: 100%;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--surface-color);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--border-glass);
   border-top: none;
   border-radius: 0 0 var(--radius-md) var(--radius-md);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
@@ -450,4 +450,35 @@
   .navbar {
     padding: 12px 20px;
   }
+}
+
+/* Theme Toggle Button */
+.theme-toggle-btn {
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-main);
+  cursor: pointer;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  width: 40px;
+  height: 40px;
+}
+
+.theme-toggle-btn:hover {
+  background: rgba(0, 181, 83, 0.08);
+  color: var(--primary-color);
+  transform: rotate(15deg) scale(1.05);
+}
+
+.theme-toggle-btn svg {
+  width: 22px;
+  height: 22px;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }

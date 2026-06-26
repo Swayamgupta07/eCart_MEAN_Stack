@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -28,13 +28,24 @@ export class ProductForm implements OnInit {
   constructor(
     private productAPI: Product,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       this.productId.set(id);
+      
+      // Reset form fields immediately so old details/images don't linger during loading
+      this.productData.name = '';
+      this.productData.description = '';
+      this.productData.price = 0;
+      this.productData.stock = 0;
+      this.productData.category = '';
+      this.productData.imageUrl = '';
+      this.cdr.markForCheck();
+
       if (id) {
         this.isEditMode.set(true);
         this.productAPI.getProduct(id).subscribe({
@@ -47,6 +58,7 @@ export class ProductForm implements OnInit {
               this.productData.category = res.product.category || '';
               this.productData.imageUrl = res.product.imageUrl || '';
             }
+            this.cdr.markForCheck();
           },
           error: (err) => {
             console.error(err);
@@ -55,16 +67,12 @@ export class ProductForm implements OnInit {
               title: 'Failed to Load Product',
               text: 'Could not fetch product information from server.'
             });
+            this.cdr.markForCheck();
           }
         });
       } else {
         this.isEditMode.set(false);
-        this.productData.name = '';
-        this.productData.description = '';
-        this.productData.price = 0;
-        this.productData.stock = 0;
-        this.productData.category = '';
-        this.productData.imageUrl = '';
+        this.cdr.markForCheck();
       }
     });
   }

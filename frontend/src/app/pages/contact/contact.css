@@ -35,7 +35,7 @@
   display: flex;
   flex-direction: column;
   gap: 32px;
-  background: rgba(255, 255, 255, 0.6);
+  background: var(--surface-color);
 }
 
 .info-item {
@@ -92,7 +92,7 @@
 }
 
 .feedback-card {
-  background: rgba(255, 255, 255, 0.75);
+  background: var(--surface-color);
 }
 
 .feedback-card h3 {

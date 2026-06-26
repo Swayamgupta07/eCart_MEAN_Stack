@@ -5,7 +5,7 @@
       <p class="subtitle">Fill in the organic product details for the grocery catalog</p>
     </div>
 
-    @if (productData.imageUrl) {
+    @if (productData.imageUrl && (productData.imageUrl.startsWith('http') || productData.imageUrl.startsWith('data:'))) {
       <div class="image-preview-container">
         <img [src]="productData.imageUrl" alt="Product Preview" class="image-preview">
       </div>

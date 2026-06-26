@@ -15,8 +15,16 @@ export class App {
   protected readonly title = signal('frontend');
   isMobileMenuOpen = signal(false);
   isProfileDropdownOpen = signal(false);
+  isDarkMode = signal(false);
 
   constructor(public authService: Auth, public cartService: Cart) {
+    const storedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialDark = storedTheme === 'dark' || (!storedTheme && prefersDark);
+
+    this.isDarkMode.set(initialDark);
+    this.applyTheme(initialDark);
+
     effect(() => {
       const user = this.authService.currentUser();
       untracked(() => {
@@ -29,6 +37,21 @@ export class App {
         }
       });
     });
+  }
+
+  applyTheme(dark: boolean) {
+    if (dark) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+  }
+
+  toggleTheme() {
+    const nextDark = !this.isDarkMode();
+    this.isDarkMode.set(nextDark);
+    localStorage.setItem('theme', nextDark ? 'dark' : 'light');
+    this.applyTheme(nextDark);
   }
 
   toggleMobileMenu() {

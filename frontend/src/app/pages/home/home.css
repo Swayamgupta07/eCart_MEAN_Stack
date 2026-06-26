@@ -87,7 +87,7 @@
 .product-card {
   display: flex;
   flex-direction: column;
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--surface-color);
   padding: 16px;
 }
 

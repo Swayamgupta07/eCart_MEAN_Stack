@@ -2,12 +2,13 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class Cart {
-  private apiUrl = 'http://localhost:3000/cart';
+  private apiUrl = `${environment.apiUrl}/cart`;
   
   public cartCount = signal<number>(0);
   public saveLaterCount = signal<number>(0);
