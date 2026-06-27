@@ -50,13 +50,5 @@
         </button>
       </div>
     </form>
-
-    <div style="background: rgba(0,0,0,0.05); padding: 15px; border-radius: 8px; margin-top: 20px; font-family: monospace; font-size: 0.85rem; border: 1px solid rgba(0,0,0,0.1);">
-      <div style="font-weight: bold; margin-bottom: 8px; color: var(--text-main);">Debug Panel (Form State)</div>
-      <div><strong>Product ID:</strong> {{ productId() || 'NULL' }}</div>
-      <div><strong>Edit Mode:</strong> {{ isEditMode() }}</div>
-      <div style="margin-top: 8px;"><strong>Form Object:</strong></div>
-      <pre style="background: white; padding: 10px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.05); overflow-x: auto; max-height: 200px; margin: 4px 0 0 0;">{{ productData | json }}</pre>
-    </div>
   </div>
 </div>
