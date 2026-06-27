@@ -4,6 +4,13 @@ Welcome to **eCart**, a modern, feature-rich, and visually stunning e-commerce w
 
 ---
 
+## 🔗 Live Application Links
+
+- 🌐 **Frontend Application (UI):** [https://ecart-mean-stack-1.onrender.com](https://ecart-mean-stack-1.onrender.com)
+- ⚙️ **Backend REST API:** [https://ecart-mean-stack.onrender.com](https://ecart-mean-stack.onrender.com)
+
+---
+
 ## ✨ Features at a Glance
 
 ### 🎨 Visual & UI Excellence
