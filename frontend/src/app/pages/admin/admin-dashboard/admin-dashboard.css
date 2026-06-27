@@ -47,7 +47,11 @@
 .table-card {
   padding: 12px 0 0;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--surface-color);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-glass);
+  box-shadow: var(--shadow-soft);
 }
 
 .table-responsive {

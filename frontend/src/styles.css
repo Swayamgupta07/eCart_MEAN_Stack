@@ -19,6 +19,7 @@
   --radius-lg: 24px;
   --radius-md: 16px;
   --radius-sm: 12px;
+  --input-focus-bg: #ffffff;
 }
 
 [data-theme="dark"] {
@@ -31,6 +32,7 @@
   --shadow-soft: 0 10px 30px -5px rgba(0, 0, 0, 0.5), 0 20px 40px -15px rgba(0, 0, 0, 0.6);
   --shadow-hover: 0 20px 40px -5px rgba(0, 181, 83, 0.15), 0 30px 60px -15px rgba(0, 0, 0, 0.7);
   --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+  --input-focus-bg: rgba(30, 45, 34, 0.95);
 }
 
 body, .navbar, .card, .profile-dropdown, .mobile-drawer, input, textarea, button, a {

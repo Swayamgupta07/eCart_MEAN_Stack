@@ -82,7 +82,7 @@
 
 .input-wrapper input:focus {
   border-color: var(--primary-color);
-  background: white;
+  background: var(--input-focus-bg);
   box-shadow: 0 0 0 4px rgba(0, 181, 83, 0.1);
 }
 
