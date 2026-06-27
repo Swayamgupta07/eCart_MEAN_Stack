@@ -17,6 +17,7 @@ Welcome to **eCart**, a modern, feature-rich, and visually stunning e-commerce w
 - **Sleek Light/Dark Mode:** A global, smooth theme switcher driven by custom CSS variables that instantly shifts the theme across all sections (Home, About Us, Contact Us, Login, Signup, and Admin Dashboards).
 - **Responsive Card Layouts:** Meticulously styled product, contact, and signup cards designed with rich aesthetics, glassmorphism hints, and hover animations.
 - **Premium Typography & Transitions:** Uses curated fonts (Outfit/Inter) with transition timings that feel premium and responsive.
+- **Interactive Custom Modals:** Integrated **SweetAlert2** to deliver elegant, responsive dialogs and notifications for actions like item deletes, order checkout, and validations.
 
 ### 🛡️ Core E-Commerce Logic
 - **Advanced Cart & Saved Items:** Fully functional cart system with state management allowing users to add, remove, adjust quantities, and instantly transfer items to a **"Save for Later"** wishlist.
@@ -30,7 +31,7 @@ Welcome to **eCart**, a modern, feature-rich, and visually stunning e-commerce w
 
 | Layer | Technology | Details & Purpose |
 | :--- | :--- | :--- |
-| **Frontend** | Angular 21, RxJS | Signals-based state management, modular routing, reactive HTTP clients, and custom stylesheets. |
+| **Frontend** | Angular 21, RxJS, SweetAlert2 | Signals-based state management, modular routing, reactive HTTP clients, custom stylesheets, and premium popup dialog modals. |
 | **Backend** | Node.js, Express.js | Modular router, JWT authentication middlewares, and strict error handlers. |
 | **Database** | MongoDB, Mongoose | Document database with schema models for Users, Products, Carts, and Orders. |
 | **Reverse Proxy** | Nginx | Serves static frontend client, resolves production CORS issues, and proxies `/api/` traffic directly to Node container. |
